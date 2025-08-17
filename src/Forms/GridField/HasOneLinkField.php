@@ -11,6 +11,7 @@ use SilverShop\HasOneField\HasOneButtonField;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\GridField\GridFieldConfig;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\Core\Validation\ValidationResult;
 
 /**
  * FormField to add a {@link \gorriecoe\Link\Models\Link} to a has_one relationship.
@@ -68,43 +69,6 @@ class HasOneLinkField extends HasOneButtonField
             return $detailForm->getLinkConfig();
         }
         return [];
-    }
-
-    /**
-     * Check that there is a link.
-     *
-     * RequiredFields makes assumptions about what missing values look like
-     * that the underlying implementation does not meet (specifically, a
-     * missing link is not an empty array). That check is hard-coded into
-     * RequiredFields.
-     *
-     * This works around it by checking to see if the field is required, then
-     * checking whether it is empty as part of validate(). Normally, required
-     * fields are checked in a separate check following validation.
-     *
-     * {@inheritdoc}
-     * @see \SilverStripe\Forms\FormField::validate()
-     */
-    public function validate($validator)
-    {
-        $valid = parent::validate($validator);
-        if ($valid) {
-            $result = $this->getRecord()->validate();
-            $valid = $result->isValid();
-            foreach ($result->getMessages() as $message) {
-                $validator->validationError($this->getName(), $message);
-            }
-        }
-        if ($valid && $validator->fieldIsRequired($this->getName()) && !$this->getRecord()->Type) {
-            $valid = false;
-
-            $errorMessage = _t('SilverStripe\\Forms\\Form.FIELDISREQUIRED', '{name} is required', [
-                'name' => strip_tags('"' . ($this->Title() ?: $this->getName()) . '"'),
-            ]);
-
-            $validator->validationError($this->getName(), $errorMessage, 'required');
-        }
-        return $valid;
     }
 
     /**
