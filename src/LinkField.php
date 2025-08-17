@@ -5,7 +5,7 @@ namespace gorriecoe\LinkField;
 use gorriecoe\Link\Models\Link;
 use gorriecoe\LinkField\Forms\GridField\GridFieldLinkDetailForm;
 use gorriecoe\LinkField\Forms\HasOneLinkField;
-use SilverStripe\View\Requirements;
+use SilverStripe\Core\Validation\ValidationResult;
 use SilverStripe\Forms\FormField;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\LiteralField;
@@ -16,6 +16,7 @@ use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldEditButton;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
+use SilverStripe\View\Requirements;
 use SilverStripe\Control\HTTPRequest;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use SilverShop\HasOneField\HasOneButtonField;
@@ -208,7 +209,7 @@ class LinkField extends FormField
 
         $config->getComponentByType(GridFieldDataColumns::class)
             ->setDisplayFields([
-                'Layout' => _t(__CLASS__ . '.LINK', 'Link')
+                'getFormattedValue' => _t(__CLASS__ . '.LINK', 'Link'),
             ]);
 
         $field = GridField::create(
@@ -266,9 +267,9 @@ class LinkField extends FormField
         return $this->linkConfig;
     }
 
-    public function validate($validator)
+    public function validate(): ValidationResult
     {
-        $valid = $this->Field()->validate($validator);
+        $valid = $this->Field()->validate();
         return $valid;
     }
 }
